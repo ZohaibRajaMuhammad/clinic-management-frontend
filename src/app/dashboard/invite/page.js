@@ -21,6 +21,9 @@ import {
   Building2,
   CheckCircle2,
   AlertCircle,
+  IdCard,
+  Shield,
+  BadgeCheck,
 } from "lucide-react";
 
 const InviteUserPage = () => {
@@ -49,6 +52,7 @@ const InviteUserPage = () => {
   });
   const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
+  const [activeStep, setActiveStep] = useState(1);
 
   // Fetch rooms from backend
   useEffect(() => {
@@ -180,6 +184,7 @@ const InviteUserPage = () => {
       });
       setStaffFields({ designation: "", shiftTiming: "" });
       setImagePreview(null);
+      setActiveStep(1);
     } catch (error) {
       console.error("Invite error:", error);
       const message = error?.response?.data?.message || "Failed to invite user";
@@ -190,414 +195,488 @@ const InviteUserPage = () => {
   };
 
   const daysOfWeek = [
-    { name: "Monday", short: "Mon", color: "blue" },
-    { name: "Tuesday", short: "Tue", color: "orange" },
-    { name: "Wednesday", short: "Wed", color: "pink" },
-    { name: "Thursday", short: "Thu", color: "blue" },
-    { name: "Friday", short: "Fri", color: "orange" },
-    { name: "Saturday", short: "Sat", color: "pink" },
-    { name: "Sunday", short: "Sun", color: "blue" },
+    { name: "Monday", short: "MON", color: "blue" },
+    { name: "Tuesday", short: "TUE", color: "indigo" },
+    { name: "Wednesday", short: "WED", color: "purple" },
+    { name: "Thursday", short: "THU", color: "blue" },
+    { name: "Friday", short: "FRI", color: "indigo" },
+    { name: "Saturday", short: "SAT", color: "purple" },
+    { name: "Sunday", short: "SUN", color: "blue" },
   ];
 
+  const nextStep = () => {
+    if (formData.name && formData.email && formData.phone && formData.gender && formData.role) {
+      setActiveStep(2);
+    } else {
+      toast.error("Please fill all basic information fields");
+    }
+  };
+
+  const prevStep = () => setActiveStep(1);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background py-8 px-4 sm:px-6 lg:px-8">
-      {/* Animated Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-pink-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '700ms' }}></div>
-        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1000ms' }}></div>
-      </div>
-
-      <div className="max-w-6xl mx-auto relative">
-        {/* Header Section */}
-        <div className="text-center mb-10 flex items-center gap-2">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 shadow-xl mb-6 transform hover:scale-110 transition-transform duration-300">
-            <UserPlus className="w-10 h-10 text-white" />
+    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white shadow-lg border border-gray-100 mb-6">
+            <UserPlus className="w-8 h-8 text-blue-600" />
           </div>
-          <div >
+          <h1 className="text-3xl font-bold text-gray-900 mb-3">Invite Team Member</h1>
+          <p className="text-gray-600 text-lg">Add new professionals to your healthcare team</p>
+        </div>
 
-          <h1 className="text-4xl sm:text-5xl font-bold text-foreground  mb-3 leading-5">
-            Invite New User
-          </h1>
-          <p className="text-foreground/70 text-lg pl-5 ">Add a new team member to your organization</p>
+        {/* Progress Steps */}
+        <div className="flex items-center justify-center mb-10">
+          <div className="flex items-center space-x-4">
+            <div className={`flex items-center ${activeStep >= 1 ? 'text-blue-600' : 'text-gray-400'}`}>
+              <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${
+                activeStep >= 1 ? 'bg-blue-600 border-blue-600 text-white' : 'border-gray-300'
+              }`}>
+                1
+              </div>
+              <span className="ml-3 font-medium">Basic Info</span>
+            </div>
+            <div className="w-12 h-0.5 bg-gray-300"></div>
+            <div className={`flex items-center ${activeStep >= 2 ? 'text-blue-600' : 'text-gray-400'}`}>
+              <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${
+                activeStep >= 2 ? 'bg-blue-600 border-blue-600 text-white' : 'border-gray-300'
+              }`}>
+                2
+              </div>
+              <span className="ml-3 font-medium">Role Details</span>
+            </div>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic Information Card */}
-          <div className="backdrop-blur-sm bg-background/80 border border-foreground/10 rounded-2xl shadow-xl p-8 hover:border-blue-500/30 transition-all duration-300">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-600/10 flex items-center justify-center border border-blue-500/20">
-                <User className="w-6 h-6 text-blue-600" />
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Step 1: Basic Information */}
+          {activeStep === 1 && (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
+                  <IdCard className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900">Personal Information</h2>
+                  <p className="text-sm text-gray-600">Basic details about the team member</p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-2xl font-bold text-foreground">Basic Information</h2>
-                <p className="text-sm text-foreground/60">Enter the user's personal details</p>
-              </div>
-            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Profile Image Upload - Centered */}
-              <div className="lg:col-span-3 flex justify-center">
-                <div className="relative group">
-                  <div className="w-30 h-30 rounded-full bg-foreground/20 p-1 shadow-2xl">
-                    <div className="w-full h-full rounded-full bg-background border-2 border-foreground/10 flex items-center justify-center overflow-hidden">
+              <div className="space-y-8">
+                {/* Profile Image */}
+                <div className="flex justify-center">
+                  <div className="relative group">
+                    <div className="w-28 h-28 rounded-full bg-gray-100 border-4 border-white shadow-lg flex items-center justify-center overflow-hidden">
                       {imagePreview ? (
                         <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                       ) : (
-                        <Upload className="w-12 h-12 text-foreground/30" />
+                        <User className="w-12 h-12 text-gray-400" />
                       )}
                     </div>
-                  </div>
-                  <label className="absolute bottom-2 right-2 w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:shadow-xl transition-all group-hover:scale-110">
-                    <Upload className="w-5 h-5 text-white" />
-                    <input
-                      type="file"
-                      name="profileImage"
-                      onChange={handleChange}
-                      className="hidden"
-                      accept="image/*"
-                    />
-                  </label>
-                </div>
-              </div>
-
-              {/* Name */}
-              <div className="group">
-                <label className="flex items-center text-sm font-bold text-foreground/80 mb-3">
-                  <User className="w-4 h-4 mr-2 text-blue-600" />
-                  Full Name
-                </label>
-                <input
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  placeholder="John Doe"
-                  className="w-full px-4 py-3.5 rounded-xl border-2 border-foreground/20  outline-none transition-all bg-foreground/5 text-foreground font-medium placeholder:text-foreground/40"
-                />
-              </div>
-
-              {/* Email */}
-              <div className="group">
-                <label className="flex items-center text-sm font-bold text-foreground/80 mb-3">
-                  <Mail className="w-4 h-4 mr-2 text-orange-600" />
-                  Email Address
-                </label>
-                <input
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  placeholder="john@example.com"
-                  className="w-full px-4 py-3.5 rounded-xl border-2 border-foreground/20  outline-none transition-all bg-foreground/5 text-foreground font-medium placeholder:text-foreground/40"
-                />
-              </div>
-
-              {/* Phone */}
-              <div className="group">
-                <label className="flex items-center text-sm font-bold text-foreground/80 mb-3">
-                  <Phone className="w-4 h-4 mr-2 text-pink-600" />
-                  Phone Number
-                </label>
-                <input
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  required
-                  placeholder="+1 (555) 000-0000"
-                  className="w-full px-4 py-3.5 rounded-xl border-2 border-foreground/20  outline-none transition-all bg-foreground/5 text-foreground font-medium placeholder:text-foreground/40"
-                />
-              </div>
-
-              {/* Gender */}
-              <div className="group">
-                <label className="flex items-center text-sm font-bold text-foreground/80 mb-3">
-                  <User className="w-4 h-4 mr-2 text-blue-600" />
-                  Gender
-                </label>
-                <select
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3.5 rounded-xl border-2 border-foreground/20  outline-none transition-all bg-foreground/5 text-foreground font-medium appearance-none cursor-pointer"
-                >
-                  <option value="">Select Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                </select>
-              </div>
-
-              {/* Role */}
-              <div className="lg:col-span-2 group">
-                <label className="flex items-center text-sm font-bold text-foreground/80 mb-3">
-                  <Briefcase className="w-4 h-4 mr-2 text-orange-600" />
-                  User Role
-                </label>
-                <select
-                  name="role"
-                  value={formData.role}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3.5 rounded-xl border-2 border-foreground/20  outline-none transition-all bg-foreground/5 text-foreground font-medium appearance-none cursor-pointer"
-                >
-                  <option value="">Select Role</option>
-                  <option value="doctor">👨‍⚕️ Doctor</option>
-                  <option value="staff">👥 Staff</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* Doctor Details */}
-          {formData.role === "doctor" && (
-            <div className="backdrop-blur-sm bg-background/80 border border-foreground/10 rounded-2xl shadow-xl p-8 hover:border-orange-500/30 transition-all duration-300 animate-in fade-in slide-in-from-bottom-5 duration-500">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500/10 to-orange-600/10 flex items-center justify-center border border-orange-500/20">
-                  <Stethoscope className="w-6 h-6 text-orange-600" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-foreground">Doctor Details</h2>
-                  <p className="text-sm text-foreground/60">Professional information and availability</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Specialization */}
-                <div className="group">
-                  <label className="flex items-center text-sm font-bold text-foreground/80 mb-3">
-                    <Stethoscope className="w-4 h-4 mr-2 text-blue-600" />
-                    Specialization
-                  </label>
-                  <input
-                    name="specialization"
-                    placeholder="e.g., Cardiology"
-                    value={doctorFields.specialization}
-                    onChange={handleDoctorChange}
-                    className="w-full px-4 py-3.5 rounded-xl border-2 border-foreground/20  outline-none transition-all bg-foreground/5 text-foreground font-medium placeholder:text-foreground/40"
-                  />
-                </div>
-
-                {/* Qualification */}
-                <div className="group">
-                  <label className="flex items-center text-sm font-bold text-foreground/80 mb-3">
-                    <Award className="w-4 h-4 mr-2 text-orange-600" />
-                    Qualification
-                  </label>
-                  <input
-                    name="qualification"
-                    placeholder="e.g., MBBS, MD"
-                    value={doctorFields.qualification}
-                    onChange={handleDoctorChange}
-                    className="w-full px-4 py-3.5 rounded-xl border-2 border-foreground/20  outline-none transition-all bg-foreground/5 text-foreground font-medium placeholder:text-foreground/40"
-                  />
-                </div>
-
-                {/* Experience */}
-                <div className="group">
-                  <label className="flex items-center text-sm font-bold text-foreground/80 mb-3">
-                    <Briefcase className="w-4 h-4 mr-2 text-pink-600" />
-                    Experience (Years)
-                  </label>
-                  <input
-                    name="experience"
-                    placeholder="e.g., 5"
-                    type="number"
-                    value={doctorFields.experience}
-                    onChange={handleDoctorChange}
-                    className="w-full px-4 py-3.5 rounded-xl border-2 border-foreground/20  outline-none transition-all bg-foreground/5 text-foreground font-medium placeholder:text-foreground/40"
-                  />
-                </div>
-
-                {/* Consultation Fee */}
-                <div className="group">
-                  <label className="flex items-center text-sm font-bold text-foreground/80 mb-3">
-                    <DollarSign className="w-4 h-4 mr-2 text-blue-600" />
-                    Consultation Fee
-                  </label>
-                  <input
-                    name="fees"
-                    placeholder="100"
-                    type="number"
-                    value={doctorFields.fees}
-                    onChange={handleDoctorChange}
-                    className="w-full px-4 py-3.5 rounded-xl border-2 border-foreground/20  outline-none transition-all bg-foreground/5 text-foreground font-medium placeholder:text-foreground/40"
-                  />
-                </div>
-
-                {/* Available Days */}
-                <div className="md:col-span-2">
-                  <label className="flex items-center text-sm font-bold text-foreground/80 mb-4">
-                    <Calendar className="w-4 h-4 mr-2 text-orange-600" />
-                    Available Days
-                  </label>
-                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-3">
-                    {daysOfWeek.map((day) => {
-                      const isSelected = doctorFields.availableDays.includes(day.name);
-                      return (
-                        <label
-                          key={day.name}
-                          className={`relative flex flex-col items-center justify-center p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
-                            isSelected
-                              ? day.color === 'blue' ? "bg-blue-500 border-blue-500 text-white shadow-lg shadow-blue-500/30 scale-105" :
-                                day.color === 'orange' ? "bg-orange-500 border-orange-500 text-white shadow-lg shadow-orange-500/30 scale-105" :
-                                "bg-pink-500 border-pink-500 text-white shadow-lg shadow-pink-500/30 scale-105"
-                              : "bg-foreground/5 border-foreground/20 text-foreground hover:border-primary/50 hover:bg-foreground/10"
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            value={day.name}
-                            onChange={handleAvailableDaysChange}
-                            checked={isSelected}
-                            className="sr-only"
-                          />
-                          <span className="font-bold text-sm">{day.short}</span>
-                          {isSelected && <CheckCircle2 className="w-4 h-4 mt-1" />}
-                        </label>
-                      );
-                    })}
+                    <label className="absolute bottom-0 right-0 w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:bg-blue-700 transition-colors">
+                      <Upload className="w-5 h-5 text-white" />
+                      <input
+                        type="file"
+                        name="profileImage"
+                        onChange={handleChange}
+                        className="hidden"
+                        accept="image/*"
+                      />
+                    </label>
                   </div>
                 </div>
 
-                {/* Start Time */}
-                <div className="group">
-                  <label className="flex items-center text-sm font-bold text-foreground/80 mb-3">
-                    <Clock className="w-4 h-4 mr-2 text-blue-600" />
-                    Start Time
-                  </label>
-                  <input
-                    type="time"
-                    value={doctorFields.availableTime.start}
-                    min="10:00"
-                    max="20:00"
-                    onChange={handleStartTimeChange}
-                    className="w-full px-4 py-3.5 rounded-xl border-2 border-foreground/20  outline-none transition-all bg-foreground/5 text-foreground font-medium"
-                  />
-                  <p className="text-xs text-foreground/50 mt-2 flex items-center">
-                    <AlertCircle className="w-3 h-3 mr-1" />
-                    Between 10:00 AM - 8:00 PM
-                  </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Name */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Full Name *
+                    </label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
+                        placeholder="John Doe"
+                        className="w-full pl-11 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-gray-900 placeholder-gray-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Email */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email Address *
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        placeholder="john@example.com"
+                        className="w-full pl-11 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-gray-900 placeholder-gray-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Phone */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Phone Number *
+                    </label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        required
+                        placeholder="+1 (555) 000-0000"
+                        className="w-full pl-11 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-gray-900 placeholder-gray-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Gender */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Gender *
+                    </label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <select
+                        name="gender"
+                        value={formData.gender}
+                        onChange={handleChange}
+                        required
+                        className="w-full pl-11 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-gray-900 appearance-none cursor-pointer"
+                      >
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Role */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      User Role *
+                    </label>
+                    <div className="relative">
+                      <Shield className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <select
+                        name="role"
+                        value={formData.role}
+                        onChange={handleChange}
+                        required
+                        className="w-full pl-11 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-gray-900 appearance-none cursor-pointer"
+                      >
+                        <option value="">Select Role</option>
+                        <option value="doctor">Doctor</option>
+                        <option value="staff">Staff</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
 
-                {/* End Time */}
-                <div className="group">
-                  <label className="flex items-center text-sm font-bold text-foreground/80 mb-3">
-                    <Clock className="w-4 h-4 mr-2 text-orange-600" />
-                    End Time
-                  </label>
-                  <input
-                    type="time"
-                    value={doctorFields.availableTime.end}
-                    min="10:00"
-                    max="20:00"
-                    onChange={handleEndTimeChange}
-                    className="w-full px-4 py-3.5 rounded-xl border-2 border-foreground/20  outline-none transition-all bg-foreground/5 text-foreground font-medium"
-                  />
-                  <p className="text-xs text-foreground/50 mt-2 flex items-center">
-                    <AlertCircle className="w-3 h-3 mr-1" />
-                    Between 10:00 AM - 8:00 PM
-                  </p>
-                </div>
-
-                {/* Select Room */}
-                <div className="md:col-span-2 group">
-                  <label className="flex items-center text-sm font-bold text-foreground/80 mb-3">
-                    <MapPin className="w-4 h-4 mr-2 text-pink-600" />
-                    Assign Room
-                  </label>
-                  <select
-                    name="roomId"
-                    value={doctorFields.roomId}
-                    onChange={handleDoctorChange}
-                    className="w-full px-4 py-3.5 rounded-xl border-2 border-foreground/20 outline-none transition-all bg-foreground/5 text-foreground font-medium appearance-none cursor-pointer"
+                {/* Next Button */}
+                <div className="flex justify-end pt-6">
+                  <button
+                    type="button"
+                    onClick={nextStep}
+                    className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors shadow-sm"
                   >
-                    <option value="">Select Room</option>
-                    {rooms.map((room) => (
-                      <option key={room._id} value={room._id}>
-                        Room {room.roomNumber}
-                      </option>
-                    ))}
-                  </select>
+                    Continue to Details
+                    <ChevronRight className="w-4 h-4 ml-2 inline" />
+                  </button>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Staff Details */}
-          {formData.role === "staff" && (
-            <div className="backdrop-blur-sm bg-background/80 border border-foreground/10 rounded-2xl shadow-xl p-8 hover:border-pink-500/30 transition-all duration-300 animate-in fade-in slide-in-from-bottom-5 duration-500">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500/10 to-pink-600/10 flex items-center justify-center border border-pink-500/20">
-                  <Users className="w-6 h-6 text-pink-600" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-foreground">Staff Details</h2>
-                  <p className="text-sm text-foreground/60">Work information and shift timings</p>
-                </div>
-              </div>
+          {/* Step 2: Role-specific Details */}
+          {activeStep === 2 && (
+            <div className="space-y-8">
+              {/* Doctor Details */}
+              {formData.role === "doctor" && (
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center">
+                      <Stethoscope className="w-6 h-6 text-green-600" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-semibold text-gray-900">Medical Professional Details</h2>
+                      <p className="text-sm text-gray-600">Doctor's qualifications and availability</p>
+                    </div>
+                  </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Designation */}
-                <div className="group">
-                  <label className="flex items-center text-sm font-bold text-foreground/80 mb-3">
-                    <Briefcase className="w-4 h-4 mr-2 text-blue-600" />
-                    Designation
-                  </label>
-                  <input
-                    name="designation"
-                    placeholder="e.g., Nurse, Receptionist"
-                    value={staffFields.designation}
-                    onChange={(e) => setStaffFields((prev) => ({ ...prev, designation: e.target.value }))}
-                    className="w-full px-4 py-3.5 rounded-xl border-2 border-foreground/20  outline-none transition-all bg-foreground/5 text-foreground font-medium placeholder:text-foreground/40"
-                  />
-                </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Specialization */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Specialization
+                      </label>
+                      <div className="relative">
+                        <Stethoscope className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input
+                          name="specialization"
+                          placeholder="Cardiology, Neurology, etc."
+                          value={doctorFields.specialization}
+                          onChange={handleDoctorChange}
+                          className="w-full pl-11 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-gray-900 placeholder-gray-500"
+                        />
+                      </div>
+                    </div>
 
-                {/* Shift Timing */}
-                <div className="group">
-                  <label className="flex items-center text-sm font-bold text-foreground/80 mb-3">
-                    <Clock className="w-4 h-4 mr-2 text-orange-600" />
-                    Shift Timing
-                  </label>
-                  <input
-                    name="shiftTiming"
-                    placeholder="e.g., 9 AM - 6 PM"
-                    value={staffFields.shiftTiming}
-                    onChange={(e) => setStaffFields((prev) => ({ ...prev, shiftTiming: e.target.value }))}
-                    className="w-full px-4 py-3.5 rounded-xl border-2 border-foreground/20 outline-none transition-all bg-foreground/5 text-foreground font-medium placeholder:text-foreground/40"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
+                    {/* Qualification */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Qualification
+                      </label>
+                      <div className="relative">
+                        <Award className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input
+                          name="qualification"
+                          placeholder="MBBS, MD, etc."
+                          value={doctorFields.qualification}
+                          onChange={handleDoctorChange}
+                          className="w-full pl-11 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-gray-900 placeholder-gray-500"
+                        />
+                      </div>
+                    </div>
 
-          {/* Submit Button */}
-          <div className="pt-4">
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full py-4 rounded-xl font-bold text-lg text-white shadow-xl transform transition-all duration-300 ${
-                loading 
-                  ? "bg-foreground/20 cursor-not-allowed" 
-                  : "bg-primary hover:shadow-2xl hover:scale-105 active:scale-95"
-              }`}
-            >
-              {loading ? (
-                <span className="flex items-center justify-center gap-3">
-                  <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin" />
-                  Sending Invitation...
-                </span>
-              ) : (
-                <span className="flex items-center justify-center gap-3">
-                  <UserPlus className="w-6 h-6" />
-                  Send Invitation
-                  <ChevronRight className="w-5 h-5" />
-                </span>
+                    {/* Experience */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Experience (Years)
+                      </label>
+                      <div className="relative">
+                        <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input
+                          name="experience"
+                          placeholder="5"
+                          type="number"
+                          value={doctorFields.experience}
+                          onChange={handleDoctorChange}
+                          className="w-full pl-11 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-gray-900 placeholder-gray-500"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Consultation Fee */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Consultation Fee ($)
+                      </label>
+                      <div className="relative">
+                        <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input
+                          name="fees"
+                          placeholder="100"
+                          type="number"
+                          value={doctorFields.fees}
+                          onChange={handleDoctorChange}
+                          className="w-full pl-11 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-gray-900 placeholder-gray-500"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Available Days */}
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-3">
+                        Available Days
+                      </label>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-3">
+                        {daysOfWeek.map((day) => {
+                          const isSelected = doctorFields.availableDays.includes(day.name);
+                          return (
+                            <label
+                              key={day.name}
+                              className={`relative flex flex-col items-center justify-center p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                                isSelected
+                                  ? 'bg-blue-50 border-blue-500 text-blue-700 shadow-sm'
+                                  : 'bg-gray-50 border-gray-200 text-gray-600 hover:border-gray-300'
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                value={day.name}
+                                onChange={handleAvailableDaysChange}
+                                checked={isSelected}
+                                className="sr-only"
+                              />
+                              <span className="font-semibold text-sm mb-1">{day.short}</span>
+                              {isSelected && <CheckCircle2 className="w-4 h-4 text-blue-500" />}
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Start Time */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Start Time
+                      </label>
+                      <div className="relative">
+                        <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input
+                          type="time"
+                          value={doctorFields.availableTime.start}
+                          min="10:00"
+                          max="20:00"
+                          onChange={handleStartTimeChange}
+                          className="w-full pl-11 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-gray-900"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">Between 10:00 AM - 8:00 PM</p>
+                    </div>
+
+                    {/* End Time */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        End Time
+                      </label>
+                      <div className="relative">
+                        <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input
+                          type="time"
+                          value={doctorFields.availableTime.end}
+                          min="10:00"
+                          max="20:00"
+                          onChange={handleEndTimeChange}
+                          className="w-full pl-11 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-gray-900"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">Between 10:00 AM - 8:00 PM</p>
+                    </div>
+
+                    {/* Select Room */}
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Assign Room
+                      </label>
+                      <div className="relative">
+                        <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <select
+                          name="roomId"
+                          value={doctorFields.roomId}
+                          onChange={handleDoctorChange}
+                          className="w-full pl-11 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-gray-900 appearance-none cursor-pointer"
+                        >
+                          <option value="">Select Room</option>
+                          {rooms.map((room) => (
+                            <option key={room._id} value={room._id}>
+                              Room {room.roomNumber}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               )}
-            </button>
-          </div>
+
+              {/* Staff Details */}
+              {formData.role === "staff" && (
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center">
+                      <Users className="w-6 h-6 text-purple-600" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-semibold text-gray-900">Staff Information</h2>
+                      <p className="text-sm text-gray-600">Staff member details and schedule</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Designation */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Designation
+                      </label>
+                      <div className="relative">
+                        <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input
+                          name="designation"
+                          placeholder="Nurse, Receptionist, etc."
+                          value={staffFields.designation}
+                          onChange={(e) => setStaffFields((prev) => ({ ...prev, designation: e.target.value }))}
+                          className="w-full pl-11 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-gray-900 placeholder-gray-500"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Shift Timing */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Shift Timing
+                      </label>
+                      <div className="relative">
+                        <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input
+                          name="shiftTiming"
+                          placeholder="9:00 AM - 6:00 PM"
+                          value={staffFields.shiftTiming}
+                          onChange={(e) => setStaffFields((prev) => ({ ...prev, shiftTiming: e.target.value }))}
+                          className="w-full pl-11 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white text-gray-900 placeholder-gray-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex justify-between pt-6">
+                <button
+                  type="button"
+                  onClick={prevStep}
+                  className="px-8 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+                >
+                  Back
+                </button>
+                <div className="flex gap-4">
+                  <button
+                    type="button"
+                    onClick={prevStep}
+                    className="px-8 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+                  >
+                    Save as Draft
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className={`px-8 py-3 rounded-lg font-medium focus:ring-2 focus:ring-offset-2 transition-colors ${
+                      loading 
+                        ? "bg-gray-400 cursor-not-allowed text-white" 
+                        : "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-sm"
+                    }`}
+                  >
+                    {loading ? (
+                      <span className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Sending Invitation...
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        <UserPlus className="w-5 h-5" />
+                        Send Invitation
+                      </span>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </form>
       </div>
     </div>

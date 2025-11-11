@@ -35,6 +35,10 @@ import {
   AlertCircle,
   Activity,
   RefreshCw,
+  ArrowRight,
+  Users,
+  FileCheck,
+  AlertTriangle,
 } from "lucide-react";
 import { useAuthContext } from "@/context/AuthContext";
 import toast from "react-hot-toast";
@@ -64,8 +68,6 @@ const AppointmentsPage = () => {
     setLoading(true);
     try {
       const userDetails = getUserDetails();
-     
-
       setUser(userDetails);
 
       let url = "";
@@ -322,24 +324,20 @@ const AppointmentsPage = () => {
   const StatusBadge = ({ status }) => {
     const statusConfig = {
       booked: {
-        color: "bg-blue-500/10 text-blue-600 border-blue-500/30",
+        color: "bg-blue-50 text-blue-700 border-blue-200",
         icon: CalendarCheck,
-        bgColor: "bg-blue-500",
       },
       "checked-in": {
-        color: "bg-orange-500/10 text-orange-600 border-orange-500/30",
+        color: "bg-amber-50 text-amber-700 border-amber-200",
         icon: Clock,
-        bgColor: "bg-orange-500",
       },
       completed: {
-        color: "bg-green-500/10 text-green-600 border-green-500/30",
+        color: "bg-emerald-50 text-emerald-700 border-emerald-200",
         icon: CheckCircle2,
-        bgColor: "bg-green-500",
       },
       cancelled: {
-        color: "bg-red-500/10 text-red-600 border-red-500/30",
+        color: "bg-red-50 text-red-700 border-red-200",
         icon: XCircle,
-        bgColor: "bg-red-500",
       },
     };
 
@@ -348,10 +346,9 @@ const AppointmentsPage = () => {
 
     return (
       <div
-        className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold border ${config.color}`}
+        className={`inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium border ${config.color}`}
       >
-        <div className={`w-2 h-2 rounded-full ${config.bgColor} mr-2`}></div>
-        <IconComponent className="w-3 h-3 mr-1" />
+        <IconComponent className="w-4 h-4 mr-2" />
         {status.charAt(0).toUpperCase() + status.slice(1).replace("-", " ")}
       </div>
     );
@@ -359,12 +356,12 @@ const AppointmentsPage = () => {
 
   const SortIcon = ({ columnKey }) => {
     if (sortConfig.key !== columnKey) {
-      return <ArrowUpDown className="w-4 h-4 text-foreground/40" />;
+      return <ArrowUpDown className="w-4 h-4 text-gray-400" />;
     }
     return sortConfig.direction === "asc" ? (
-      <ChevronUp className="w-4 h-4 text-primary" />
+      <ChevronUp className="w-4 h-4 text-blue-600" />
     ) : (
-      <ChevronDown className="w-4 h-4 text-primary" />
+      <ChevronDown className="w-4 h-4 text-blue-600" />
     );
   };
 
@@ -373,7 +370,7 @@ const AppointmentsPage = () => {
     if (!isOpen) return null;
 
     return (
-      <div className="absolute right-0 top-8 z-50 bg-background border border-foreground/10 rounded-xl shadow-2xl py-2 min-w-48 animate-in fade-in slide-in-from-top-2 duration-200">
+      <div className="absolute right-0 top-10 z-50 bg-white border border-gray-200 rounded-lg shadow-xl py-2 w-56">
         {/* Complete Button */}
         {(user?.role === "doctor" || user?.role === "admin") &&
           (appointment.status === "booked" ||
@@ -381,7 +378,7 @@ const AppointmentsPage = () => {
             <button
               onClick={() => completeAppointment(appointment._id)}
               disabled={actionLoading === appointment._id}
-              className="w-full flex items-center px-4 py-2.5 text-sm text-green-600 hover:bg-green-500/10 disabled:opacity-50 transition-colors font-medium"
+              className="w-full flex items-center px-4 py-2.5 text-sm text-emerald-700 hover:bg-emerald-50 disabled:opacity-50 transition-colors"
             >
               {actionLoading === appointment._id ? (
                 <Loader2 className="w-4 h-4 mr-3 animate-spin" />
@@ -398,7 +395,7 @@ const AppointmentsPage = () => {
             <button
               onClick={() => cancelAppointment(appointment._id)}
               disabled={actionLoading === appointment._id}
-              className="w-full flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-500/10 disabled:opacity-50 transition-colors font-medium"
+              className="w-full flex items-center px-4 py-2.5 text-sm text-red-700 hover:bg-red-50 disabled:opacity-50 transition-colors"
             >
               {actionLoading === appointment._id ? (
                 <Loader2 className="w-4 h-4 mr-3 animate-spin" />
@@ -413,7 +410,7 @@ const AppointmentsPage = () => {
         {user?.role === "doctor" && appointment.status === "completed" && (
           <button
             onClick={() => openCaseHistoryModal(appointment)}
-            className="w-full flex items-center px-4 py-2.5 text-sm text-blue-600 hover:bg-blue-500/10 transition-colors font-medium"
+            className="w-full flex items-center px-4 py-2.5 text-sm text-blue-700 hover:bg-blue-50 transition-colors"
           >
             <FileText className="w-4 h-4 mr-3" />
             Create Case History
@@ -421,7 +418,7 @@ const AppointmentsPage = () => {
         )}
 
         {/* View Details */}
-        <button className="w-full flex items-center px-4 py-2.5 text-sm text-foreground/70 hover:bg-foreground/5 transition-colors font-medium">
+        <button className="w-full flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
           <Eye className="w-4 h-4 mr-3" />
           View Details
         </button>
@@ -442,19 +439,17 @@ const AppointmentsPage = () => {
         <React.Fragment key={step.id}>
           <div className="flex flex-col items-center">
             <div
-              className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${
+              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
                 currentStep >= step.id
-                  ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-500/30"
-                  : "bg-foreground/10 text-foreground/40"
+                  ? "bg-blue-600 text-white shadow-lg"
+                  : "bg-gray-100 text-gray-400"
               }`}
             >
               <step.icon className="w-5 h-5" />
             </div>
             <span
-              className={`text-xs font-medium mt-2 ${
-                currentStep >= step.id
-                  ? "text-foreground"
-                  : "text-foreground/40"
+              className={`text-sm font-medium mt-2 ${
+                currentStep >= step.id ? "text-gray-900" : "text-gray-400"
               }`}
             >
               {step.name}
@@ -462,8 +457,8 @@ const AppointmentsPage = () => {
           </div>
           {index < steps.length - 1 && (
             <div
-              className={`h-0.5 w-24 mx-4 mb-6 transition-all duration-300 ${
-                currentStep > step.id ? "bg-blue-600" : "bg-foreground/10"
+              className={`h-0.5 w-16 mx-4 mb-6 transition-all duration-300 ${
+                currentStep > step.id ? "bg-blue-600" : "bg-gray-200"
               }`}
             />
           )}
@@ -474,7 +469,7 @@ const AppointmentsPage = () => {
 
   if (loading) {
     return (
-     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="flex items-center gap-3 text-gray-600">
           <RefreshCw className="animate-spin" size={24} />
           <span className="text-lg">Loading appointments...</span>
@@ -484,29 +479,16 @@ const AppointmentsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-background py-8 px-4 sm:px-6 lg:px-8">
-      {/* Animated Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl animate-pulse"></div>
-        <div
-          className="absolute bottom-0 right-0 w-96 h-96 bg-pink-400/10 rounded-full blur-3xl animate-pulse"
-          style={{ animationDelay: "700ms" }}
-        ></div>
-        <div
-          className="absolute top-1/2 left-1/2 w-96 h-96 bg-orange-400/10 rounded-full blur-3xl animate-pulse"
-          style={{ animationDelay: "1000ms" }}
-        ></div>
-      </div>
-
-      <div className="max-w-7xl mx-auto relative">
+    <div className="min-h-screen bg-gray-50 py-6 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        {/* <div className="mb-8">
+        <div className="mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-blue-600 via-orange-500 to-pink-600 bg-clip-text text-transparent mb-2">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 Appointment Management
               </h1>
-              <p className="text-foreground/70 text-lg">
+              <p className="text-gray-600 text-lg">
                 {user?.role === "admin" &&
                   "Comprehensive overview of all clinic appointments"}
                 {user?.role === "doctor" &&
@@ -515,120 +497,94 @@ const AppointmentsPage = () => {
                   "Track and manage your medical appointments"}
               </p>
             </div>
-            <div className="mt-4 lg:mt-0 flex items-center space-x-4">
-              <button className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all flex items-center shadow-lg shadow-blue-500/30 font-medium">
+            <div className="mt-4 lg:mt-0 flex items-center space-x-3">
+              <button className="bg-white border border-gray-300 text-gray-700 px-4 py-2.5 rounded-lg hover:bg-gray-50 transition-all flex items-center shadow-sm font-medium">
                 <Download className="w-4 h-4 mr-2" />
-                Export Data
+                Export
               </button>
-            </div>
-          </div>
-        </div> */}
-
-        <div className="mb-12 relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent rounded-3xl blur-2xl"></div>
-          <div className="relative bg-background/80 backdrop-blur-xl border border-primary/20 rounded-3xl p-8 shadow-2xl">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-              <div className="flex items-center gap-6">
-                <div className="w-16 h-16 bg-gradient-to-br from-orange-600 to-orange-200 rounded-2xl flex items-center justify-center shadow-lg">
-                  <Activity className="w-8 h-8 text-background" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-foreground mb-2 bg-gradient-to-r from-foreground to-foreground/60 bg-clip-text">
-                    Appointment Management
-                  </h1>
-                  <p className="text-foreground/70 text-lg">
-                    {user?.role === "admin" &&
-                      "Complete overview of all patient records"}
-                    {user?.role === "doctor" &&
-                      "Your comprehensive patient case histories"}
-                    {user?.role === "patient" &&
-                      "Your complete medical journey"}
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         </div>
 
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="backdrop-blur-sm bg-background/80 border border-foreground/10 rounded-2xl p-6 hover:border-blue-500/50 transition-all duration-300 shadow-sm hover:shadow-lg group">
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-foreground/70 mb-1">
+                <p className="text-sm font-medium text-gray-600 mb-1">
                   Total Appointments
                 </p>
-                <p className="text-3xl font-bold text-foreground">
+                <p className="text-2xl font-bold text-gray-900">
                   {appointments.length}
                 </p>
               </div>
-              <div className="p-4 bg-gradient-to-br from-blue-500/10 to-blue-600/10 rounded-xl group-hover:scale-110 transition-transform">
-                <Calendar className="w-7 h-7 text-blue-600" />
+              <div className="p-3 bg-blue-50 rounded-lg">
+                <Calendar className="w-6 h-6 text-blue-600" />
               </div>
             </div>
           </div>
 
-          <div className="backdrop-blur-sm bg-background/80 border border-foreground/10 rounded-2xl p-6 hover:border-green-500/50 transition-all duration-300 shadow-sm hover:shadow-lg group">
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-foreground/70 mb-1">
+                <p className="text-sm font-medium text-gray-600 mb-1">
                   Completed
                 </p>
-                <p className="text-3xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-emerald-600">
                   {appointments.filter((a) => a.status === "completed").length}
                 </p>
               </div>
-              <div className="p-4 bg-gradient-to-br from-green-500/10 to-green-600/10 rounded-xl group-hover:scale-110 transition-transform">
-                <CheckCircle2 className="w-7 h-7 text-green-600" />
+              <div className="p-3 bg-emerald-50 rounded-lg">
+                <CheckCircle2 className="w-6 h-6 text-emerald-600" />
               </div>
             </div>
           </div>
 
-          <div className="backdrop-blur-sm bg-background/80 border border-foreground/10 rounded-2xl p-6 hover:border-orange-500/50 transition-all duration-300 shadow-sm hover:shadow-lg group">
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-foreground/70 mb-1">
+                <p className="text-sm font-medium text-gray-600 mb-1">
                   Scheduled
                 </p>
-                <p className="text-3xl font-bold text-orange-600">
+                <p className="text-2xl font-bold text-amber-600">
                   {appointments.filter((a) => a.status === "booked").length}
                 </p>
               </div>
-              <div className="p-4 bg-gradient-to-br from-orange-500/10 to-orange-600/10 rounded-xl group-hover:scale-110 transition-transform">
-                <CalendarCheck className="w-7 h-7 text-orange-600" />
+              <div className="p-3 bg-amber-50 rounded-lg">
+                <CalendarCheck className="w-6 h-6 text-amber-600" />
               </div>
             </div>
           </div>
 
-          <div className="backdrop-blur-sm bg-background/80 border border-foreground/10 rounded-2xl p-6 hover:border-red-500/50 transition-all duration-300 shadow-sm hover:shadow-lg group">
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-foreground/70 mb-1">
+                <p className="text-sm font-medium text-gray-600 mb-1">
                   Cancelled
                 </p>
-                <p className="text-3xl font-bold text-red-600">
+                <p className="text-2xl font-bold text-red-600">
                   {appointments.filter((a) => a.status === "cancelled").length}
                 </p>
               </div>
-              <div className="p-4 bg-gradient-to-br from-red-500/10 to-red-600/10 rounded-xl group-hover:scale-110 transition-transform">
-                <XCircle className="w-7 h-7 text-red-600" />
+              <div className="p-3 bg-red-50 rounded-lg">
+                <XCircle className="w-6 h-6 text-red-600" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Filters Card */}
-        <div className="backdrop-blur-sm bg-background/80 border border-foreground/10 rounded-2xl p-6 mb-8 shadow-sm">
+        <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 gap-4">
             <div className="flex-1 max-w-2xl">
               <div className="relative">
-                <Search className="w-5 h-5 text-foreground/40 absolute left-4 top-1/2 transform -translate-y-1/2" />
+                <Search className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2" />
                 <input
                   type="text"
                   placeholder="Search by patient, doctor, reason, or room..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3.5 bg-foreground/5 border border-foreground/20 rounded-xl text-foreground placeholder:text-foreground/50 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all duration-300"
+                  className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder:text-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-300"
                 />
               </div>
             </div>
@@ -637,7 +593,7 @@ const AppointmentsPage = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-3.5 bg-foreground/5 border border-foreground/20 rounded-xl text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all duration-300 font-medium"
+                className="px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-300 font-medium"
               >
                 <option value="all">All Status</option>
                 <option value="booked">Scheduled</option>
@@ -650,23 +606,23 @@ const AppointmentsPage = () => {
                 type="date"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
-                className="px-4 py-3.5 bg-foreground/5 border border-foreground/20 rounded-xl text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all duration-300 font-medium"
+                className="px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-300 font-medium"
               />
             </div>
           </div>
         </div>
 
         {/* Appointments Table */}
-        <div className="backdrop-blur-sm bg-background/80 border border-foreground/10 rounded-2xl overflow-hidden ">
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           {sortedAppointments.length === 0 ? (
-            <div className="text-center py-20">
-              <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <Calendar className="w-10 h-10 text-primary" />
+            <div className="text-center py-16">
+              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                <Calendar className="w-8 h-8 text-gray-400" />
               </div>
-              <h3 className="text-xl font-bold text-foreground mb-2">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 No appointments found
               </h3>
-              <p className="text-foreground/70 max-w-md mx-auto">
+              <p className="text-gray-600 max-w-md mx-auto">
                 {searchTerm || statusFilter !== "all" || dateFilter
                   ? "No appointments match your current filters. Try adjusting your search criteria."
                   : "No appointments have been scheduled yet."}
@@ -676,9 +632,9 @@ const AppointmentsPage = () => {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-foreground/10 bg-gradient-to-r from-blue-500/5 via-orange-500/5 to-pink-500/5">
+                  <tr className="border-b border-gray-200 bg-gray-50">
                     <th
-                      className="px-6 py-4 text-left text-xs font-bold text-foreground/80 uppercase tracking-wider cursor-pointer hover:bg-foreground/10 transition-colors"
+                      className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                       onClick={() => handleSort("patientName")}
                     >
                       <div className="flex items-center space-x-2">
@@ -687,7 +643,7 @@ const AppointmentsPage = () => {
                       </div>
                     </th>
                     <th
-                      className="px-6 py-4 text-left text-xs font-bold text-foreground/80 uppercase tracking-wider cursor-pointer hover:bg-foreground/10 transition-colors"
+                      className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                       onClick={() => handleSort("doctorName")}
                     >
                       <div className="flex items-center space-x-2">
@@ -696,7 +652,7 @@ const AppointmentsPage = () => {
                       </div>
                     </th>
                     <th
-                      className="px-6 py-4 text-left text-xs font-bold text-foreground/80 uppercase tracking-wider cursor-pointer hover:bg-foreground/10 transition-colors"
+                      className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                       onClick={() => handleSort("date")}
                     >
                       <div className="flex items-center space-x-2">
@@ -704,11 +660,11 @@ const AppointmentsPage = () => {
                         <SortIcon columnKey="date" />
                       </div>
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-foreground/80 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Room
                     </th>
                     <th
-                      className="px-6 py-4 text-left text-xs font-bold text-foreground/80 uppercase tracking-wider cursor-pointer hover:bg-foreground/10 transition-colors"
+                      className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                       onClick={() => handleSort("status")}
                     >
                       <div className="flex items-center space-x-2">
@@ -716,47 +672,42 @@ const AppointmentsPage = () => {
                         <SortIcon columnKey="status" />
                       </div>
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-foreground/80 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-foreground/10">
+                <tbody className="divide-y divide-gray-200">
                   {sortedAppointments.map((appointment) => (
                     <tr
                       key={appointment._id}
-                      className="hover:bg-gradient-to-r hover:from-blue-500/5 hover:to-pink-500/5 transition-all duration-200 group"
+                      className="hover:bg-gray-50 transition-colors"
                     >
                       {/* Patient Column */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           {appointment.patientId?.userId?.profileImage ? (
-                            <>
-                              <img
-                                src={appointment.patientId.userId.profileImage}
-                                alt={appointment.patientId?.userId?.name}
-                                className="w-11 h-11 rounded-full object-cover border-2 border-foreground/10 group-hover:border-blue-500/50 transition-colors"
-                              />
-                              <div className="pl-2 text-sm font-bold text-foreground group-hover:text-blue-600 transition-colors">
-                                {appointment.patientId?.userId?.name}
-                              </div>
-                            </>
+                            <img
+                              src={appointment.patientId.userId.profileImage}
+                              alt={appointment.patientId?.userId?.name}
+                              className="w-10 h-10 rounded-full object-cover border border-gray-300"
+                            />
                           ) : (
-                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center text-blue-600 font-bold text-lg border-2 border-blue-500/30">
+                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold text-sm border border-blue-200">
                               {appointment.patientId?.userId?.name?.charAt(0) ||
                                 "P"}
-                              <div className="ml-4">
-                                <div className="text-sm font-bold text-foreground group-hover:text-blue-600 transition-colors">
-                                  {appointment.patientId?.userId?.name}
-                                </div>
-                                <div className="text-xs text-foreground/60 mt-0.5 flex items-center">
-                                  <Phone className="w-3 h-3 mr-1" />
-                                  {appointment.patientId?.userId?.phone ||
-                                    "No phone"}
-                                </div>
-                              </div>
                             </div>
                           )}
+                          <div className="ml-3">
+                            <div className="text-sm font-semibold text-gray-900">
+                              {appointment.patientId?.userId?.name}
+                            </div>
+                            <div className="text-xs text-gray-500 mt-0.5 flex items-center">
+                              <Phone className="w-3 h-3 mr-1" />
+                              {appointment.patientId?.userId?.phone ||
+                                "No phone"}
+                            </div>
+                          </div>
                         </div>
                       </td>
 
@@ -767,18 +718,18 @@ const AppointmentsPage = () => {
                             <img
                               src={appointment.doctorId.userId.profileImage}
                               alt={appointment.doctorId?.userId?.name}
-                              className="w-11 h-11 rounded-full object-cover border-2 border-foreground/10 group-hover:border-orange-500/50 transition-colors"
+                              className="w-10 h-10 rounded-full object-cover border border-gray-300"
                             />
                           ) : (
-                            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-orange-500/20 to-orange-600/20 flex items-center justify-center text-orange-600 font-bold text-lg border-2 border-orange-500/30">
+                            <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-semibold text-sm border border-orange-200">
                               D
                             </div>
                           )}
-                          <div className="ml-4">
-                            <div className="text-sm font-bold text-foreground group-hover:text-orange-600 transition-colors">
+                          <div className="ml-3">
+                            <div className="text-sm font-semibold text-gray-900">
                               Dr. {appointment.doctorId?.userId?.name}
                             </div>
-                            <div className="text-xs text-primary font-semibold mt-0.5">
+                            <div className="text-xs text-blue-600 font-medium mt-0.5">
                               {appointment.doctorId?.specialization}
                             </div>
                           </div>
@@ -787,7 +738,7 @@ const AppointmentsPage = () => {
 
                       {/* Date & Time Column */}
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-bold text-foreground">
+                        <div className="text-sm font-semibold text-gray-900">
                           {new Date(
                             appointment.appointmentDate
                           ).toLocaleDateString("en-US", {
@@ -797,7 +748,7 @@ const AppointmentsPage = () => {
                             day: "numeric",
                           })}
                         </div>
-                        <div className="flex items-center text-xs text-foreground/60 mt-1 font-medium">
+                        <div className="flex items-center text-xs text-gray-500 mt-1">
                           <Clock className="w-3 h-3 mr-1" />
                           {new Date(appointment.startAt).toLocaleTimeString(
                             [],
@@ -818,20 +769,20 @@ const AppointmentsPage = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         {appointment.roomId ? (
                           <div className="flex items-center">
-                            <div className="w-9 h-9 rounded-lg bg-pink-500/10 flex items-center justify-center mr-3 border border-pink-500/20">
-                              <MapPin className="w-4 h-4 text-pink-600" />
+                            <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center mr-3 border border-purple-200">
+                              <MapPin className="w-4 h-4 text-purple-600" />
                             </div>
                             <div>
-                              <div className="text-sm font-bold text-foreground">
+                              <div className="text-sm font-semibold text-gray-900">
                                 {appointment.roomId.RoomName}
                               </div>
-                              <div className="text-xs text-foreground/60 font-medium">
+                              <div className="text-xs text-gray-500">
                                 Room #{appointment.roomId.roomNumber}
                               </div>
                             </div>
                           </div>
                         ) : (
-                          <span className="text-sm text-foreground/50 italic">
+                          <span className="text-sm text-gray-500 italic">
                             Not assigned
                           </span>
                         )}
@@ -857,9 +808,9 @@ const AppointmentsPage = () => {
                                   : appointment._id
                               );
                             }}
-                            className="p-2.5 hover:bg-foreground/10 rounded-lg transition-colors group"
+                            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                           >
-                            <MoreVertical className="w-5 h-5 text-foreground/60 group-hover:text-foreground" />
+                            <MoreVertical className="w-5 h-5 text-gray-400" />
                           </button>
 
                           {activeMenu === appointment._id && (
@@ -880,15 +831,15 @@ const AppointmentsPage = () => {
         </div>
 
         {/* Footer Info */}
-        <div className="mt-8 text-center">
-          <div className="inline-flex items-center px-6 py-3 bg-foreground/5 rounded-full border border-foreground/10">
-            <span className="text-sm font-medium text-foreground/70">
+        <div className="mt-6 text-center">
+          <div className="inline-flex items-center px-4 py-2 bg-gray-100 rounded-lg border border-gray-200">
+            <span className="text-sm text-gray-600">
               Showing{" "}
-              <span className="font-bold text-foreground">
+              <span className="font-semibold text-gray-900">
                 {sortedAppointments.length}
               </span>{" "}
               of{" "}
-              <span className="font-bold text-foreground">
+              <span className="font-semibold text-gray-900">
                 {appointments.length}
               </span>{" "}
               appointments
@@ -899,28 +850,24 @@ const AppointmentsPage = () => {
 
       {/* Case History Modal */}
       {showCaseHistoryModal && selectedAppointment && (
-        <div className="fixed inset-0 bg-foreground/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
-          <div className="bg-background rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden shadow-2xl border border-foreground/10">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl border border-gray-200">
             {/* Modal Header */}
-            <div className="sticky top-0 bg-gradient-to-r from-blue-500/10 via-orange-500/10 to-pink-500/10 backdrop-blur-sm border-b border-foreground/10 p-6">
+            <div className="bg-white border-b border-gray-200 p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-orange-500 to-pink-600 bg-clip-text text-transparent">
+                  <h3 className="text-xl font-bold text-gray-900">
                     Create Case History
                   </h3>
                   <div className="flex items-center gap-4 mt-2">
-                    <p className="text-sm text-foreground/70 font-medium">
-                      <span className="text-foreground font-semibold">
-                        Patient:
-                      </span>{" "}
+                    <p className="text-sm text-gray-600">
+                      <span className="font-semibold">Patient:</span>{" "}
                       {selectedAppointment.patientId?.userId?.name}
                     </p>
-                    <span className="text-foreground/40">•</span>
-                    <p className="text-sm text-foreground/70 font-medium">
-                      <span className="text-foreground font-semibold">
-                        Doctor:
-                      </span>{" "}
-                      Dr. {selectedAppointment.doctorId?.userId?.name}
+                    <span className="text-gray-400">•</span>
+                    <p className="text-sm text-gray-600">
+                      <span className="font-semibold">Doctor:</span> Dr.{" "}
+                      {selectedAppointment.doctorId?.userId?.name}
                     </p>
                   </div>
                 </div>
@@ -929,31 +876,31 @@ const AppointmentsPage = () => {
                     setShowCaseHistoryModal(false);
                     setCurrentStep(0);
                   }}
-                  className="p-2.5 hover:bg-foreground/10 rounded-xl transition-colors"
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 >
-                  <X className="w-6 h-6 text-foreground/70" />
+                  <X className="w-5 h-5 text-gray-500" />
                 </button>
               </div>
             </div>
 
             {/* Stepper */}
-            <div className="p-6 bg-foreground/5">
+            <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
               <StepIndicator />
             </div>
 
             {/* Form Content */}
             <form
               onSubmit={submitCaseHistory}
-              className="overflow-y-auto max-h-[calc(90vh-280px)]"
+              className="overflow-y-auto max-h-[calc(90vh-200px)]"
             >
               <div className="p-6">
                 {/* Step 0: Clinical Notes */}
                 {currentStep === 0 && (
-                  <div className="space-y-6 animate-in fade-in slide-in-from-right-5 duration-300">
-                    <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-6">
-                      <label className="flex items-center text-base font-bold text-foreground mb-4">
-                        <div className="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center mr-3">
-                          <StickyNote className="w-5 h-5 text-white" />
+                  <div className="space-y-4">
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                      <label className="flex items-center text-lg font-semibold text-gray-900 mb-4">
+                        <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center mr-3">
+                          <StickyNote className="w-4 h-4 text-white" />
                         </div>
                         Clinical Notes & Observations
                       </label>
@@ -962,11 +909,11 @@ const AppointmentsPage = () => {
                         onChange={(e) =>
                           handleCaseHistoryChange("notes", e.target.value)
                         }
-                        rows={8}
-                        className="w-full px-4 py-3 bg-background border-2 border-foreground/20 rounded-xl text-foreground focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
+                        rows={6}
+                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
                         placeholder="Enter detailed clinical notes, patient observations, symptoms, diagnosis, and treatment recommendations..."
                       />
-                      <div className="mt-3 flex items-start gap-2 text-xs text-foreground/60">
+                      <div className="mt-3 flex items-start gap-2 text-sm text-gray-600">
                         <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                         <p>
                           Include all relevant medical information, patient
@@ -980,33 +927,33 @@ const AppointmentsPage = () => {
 
                 {/* Step 1: Medicines */}
                 {currentStep === 1 && (
-                  <div className="space-y-6 animate-in fade-in slide-in-from-right-5 duration-300">
-                    <div className="bg-orange-500/5 border border-orange-500/20 rounded-xl p-6">
-                      <div className="flex items-center justify-between mb-6">
-                        <label className="flex items-center text-base font-bold text-foreground">
-                          <div className="w-10 h-10 rounded-lg bg-orange-600 flex items-center justify-center mr-3">
-                            <Pill className="w-5 h-5 text-white" />
+                  <div className="space-y-4">
+                    <div className="bg-orange-50 border border-orange-200 rounded-lg p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <label className="flex items-center text-lg font-semibold text-gray-900">
+                          <div className="w-8 h-8 rounded-lg bg-orange-600 flex items-center justify-center mr-3">
+                            <Pill className="w-4 h-4 text-white" />
                           </div>
                           Prescribed Medicines
                         </label>
                         <button
                           type="button"
                           onClick={addMedicine}
-                          className="flex items-center gap-2 px-4 py-2 text-sm bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-all shadow-lg shadow-orange-500/30 font-medium"
+                          className="flex items-center gap-2 px-3 py-2 text-sm bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-all font-medium"
                         >
                           <Plus className="w-4 h-4" />
                           Add Medicine
                         </button>
                       </div>
 
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         {caseHistoryForm.medicines.map((medicine, index) => (
                           <div
                             key={index}
-                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-5 border-2 border-foreground/10 rounded-xl bg-background hover:border-orange-500/30 transition-all"
+                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 p-4 border border-gray-300 rounded-lg bg-white hover:border-orange-300 transition-all"
                           >
                             <div>
-                              <label className="text-xs font-semibold text-foreground/70 mb-2 block">
+                              <label className="text-xs font-semibold text-gray-700 mb-1 block">
                                 Medicine Name
                               </label>
                               <input
@@ -1016,11 +963,11 @@ const AppointmentsPage = () => {
                                 onChange={(e) =>
                                   updateMedicine(index, "name", e.target.value)
                                 }
-                                className="w-full px-3 py-2.5 bg-foreground/5 border border-foreground/20 rounded-lg text-foreground focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none text-sm font-medium"
+                                className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none text-sm"
                               />
                             </div>
                             <div>
-                              <label className="text-xs font-semibold text-foreground/70 mb-2 block">
+                              <label className="text-xs font-semibold text-gray-700 mb-1 block">
                                 Dosage
                               </label>
                               <input
@@ -1034,11 +981,11 @@ const AppointmentsPage = () => {
                                     e.target.value
                                   )
                                 }
-                                className="w-full px-3 py-2.5 bg-foreground/5 border border-foreground/20 rounded-lg text-foreground focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none text-sm font-medium"
+                                className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none text-sm"
                               />
                             </div>
                             <div>
-                              <label className="text-xs font-semibold text-foreground/70 mb-2 block">
+                              <label className="text-xs font-semibold text-gray-700 mb-1 block">
                                 Frequency
                               </label>
                               <input
@@ -1052,12 +999,12 @@ const AppointmentsPage = () => {
                                     e.target.value
                                   )
                                 }
-                                className="w-full px-3 py-2.5 bg-foreground/5 border border-foreground/20 rounded-lg text-foreground focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none text-sm font-medium"
+                                className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none text-sm"
                               />
                             </div>
                             <div className="flex gap-2">
                               <div className="flex-1">
-                                <label className="text-xs font-semibold text-foreground/70 mb-2 block">
+                                <label className="text-xs font-semibold text-gray-700 mb-1 block">
                                   Duration
                                 </label>
                                 <input
@@ -1071,14 +1018,14 @@ const AppointmentsPage = () => {
                                       e.target.value
                                     )
                                   }
-                                  className="w-full px-3 py-2.5 bg-foreground/5 border border-foreground/20 rounded-lg text-foreground focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none text-sm font-medium"
+                                  className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none text-sm"
                                 />
                               </div>
                               {caseHistoryForm.medicines.length > 1 && (
                                 <button
                                   type="button"
                                   onClick={() => removeMedicine(index)}
-                                  className="self-end p-2.5 text-red-600 hover:bg-red-500/10 rounded-lg transition-colors border border-red-500/20"
+                                  className="self-end p-2 text-red-600 hover:bg-red-50 rounded transition-colors border border-red-200"
                                   title="Remove medicine"
                                 >
                                   <Trash2 className="w-4 h-4" />
@@ -1094,33 +1041,33 @@ const AppointmentsPage = () => {
 
                 {/* Step 2: Reports */}
                 {currentStep === 2 && (
-                  <div className="space-y-6 animate-in fade-in slide-in-from-right-5 duration-300">
-                    <div className="bg-pink-500/5 border border-pink-500/20 rounded-xl p-6">
-                      <div className="flex items-center justify-between mb-6">
-                        <label className="flex items-center text-base font-bold text-foreground">
-                          <div className="w-10 h-10 rounded-lg bg-pink-600 flex items-center justify-center mr-3">
-                            <FileUp className="w-5 h-5 text-white" />
+                  <div className="space-y-4">
+                    <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <label className="flex items-center text-lg font-semibold text-gray-900">
+                          <div className="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center mr-3">
+                            <FileUp className="w-4 h-4 text-white" />
                           </div>
                           Medical Reports & Documents
                         </label>
                         <button
                           type="button"
                           onClick={addReport}
-                          className="flex items-center gap-2 px-4 py-2 text-sm bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-all shadow-lg shadow-pink-500/30 font-medium"
+                          className="flex items-center gap-2 px-3 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all font-medium"
                         >
                           <Plus className="w-4 h-4" />
                           Add Report
                         </button>
                       </div>
 
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         {caseHistoryForm.reports.map((report, index) => (
                           <div
                             key={index}
-                            className="grid grid-cols-1 md:grid-cols-3 gap-4 p-5 border-2 border-foreground/10 rounded-xl bg-background hover:border-pink-500/30 transition-all"
+                            className="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 border border-gray-300 rounded-lg bg-white hover:border-purple-300 transition-all"
                           >
                             <div>
-                              <label className="text-xs font-semibold text-foreground/70 mb-2 block">
+                              <label className="text-xs font-semibold text-gray-700 mb-1 block">
                                 Report Type
                               </label>
                               <input
@@ -1134,11 +1081,11 @@ const AppointmentsPage = () => {
                                     e.target.value
                                   )
                                 }
-                                className="w-full px-3 py-2.5 bg-foreground/5 border border-foreground/20 rounded-lg text-foreground focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none text-sm font-medium"
+                                className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-sm"
                               />
                             </div>
                             <div>
-                              <label className="text-xs font-semibold text-foreground/70 mb-2 block">
+                              <label className="text-xs font-semibold text-gray-700 mb-1 block">
                                 File URL
                               </label>
                               <input
@@ -1148,12 +1095,12 @@ const AppointmentsPage = () => {
                                 onChange={(e) =>
                                   updateReport(index, "fileUrl", e.target.value)
                                 }
-                                className="w-full px-3 py-2.5 bg-foreground/5 border border-foreground/20 rounded-lg text-foreground focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none text-sm font-medium"
+                                className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-sm"
                               />
                             </div>
                             <div className="flex gap-2">
                               <div className="flex-1">
-                                <label className="text-xs font-semibold text-foreground/70 mb-2 block">
+                                <label className="text-xs font-semibold text-gray-700 mb-1 block">
                                   Description
                                 </label>
                                 <input
@@ -1167,14 +1114,14 @@ const AppointmentsPage = () => {
                                       e.target.value
                                     )
                                   }
-                                  className="w-full px-3 py-2.5 bg-foreground/5 border border-foreground/20 rounded-lg text-foreground focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none text-sm font-medium"
+                                  className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded text-gray-900 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none text-sm"
                                 />
                               </div>
                               {caseHistoryForm.reports.length > 1 && (
                                 <button
                                   type="button"
                                   onClick={() => removeReport(index)}
-                                  className="self-end p-2.5 text-red-600 hover:bg-red-500/10 rounded-lg transition-colors border border-red-500/20"
+                                  className="self-end p-2 text-red-600 hover:bg-red-50 rounded transition-colors border border-red-200"
                                   title="Remove report"
                                 >
                                   <Trash2 className="w-4 h-4" />
@@ -1190,20 +1137,20 @@ const AppointmentsPage = () => {
               </div>
 
               {/* Navigation Buttons */}
-              <div className="sticky bottom-0 bg-background border-t border-foreground/10 p-6">
+              <div className="bg-white border-t border-gray-200 p-6">
                 <div className="flex items-center justify-between gap-4">
                   <button
                     type="button"
                     onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
                     disabled={currentStep === 0}
-                    className="px-6 py-3 bg-foreground/10 text-foreground rounded-xl hover:bg-foreground/20 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
                     <ChevronDown className="w-4 h-4 rotate-90" />
                     Previous
                   </button>
 
                   <div className="flex-1 text-center">
-                    <span className="text-sm text-foreground/60 font-medium">
+                    <span className="text-sm text-gray-600 font-medium">
                       Step {currentStep + 1} of {steps.length}
                     </span>
                   </div>
@@ -1216,7 +1163,7 @@ const AppointmentsPage = () => {
                           Math.min(steps.length - 1, currentStep + 1)
                         )
                       }
-                      className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all font-medium shadow-lg shadow-blue-500/30 flex items-center gap-2"
+                      className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-medium flex items-center gap-2"
                     >
                       Next
                       <ChevronRight className="w-4 h-4" />
@@ -1224,9 +1171,9 @@ const AppointmentsPage = () => {
                   ) : (
                     <button
                       type="submit"
-                      className="px-8 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl hover:from-green-700 hover:to-green-800 transition-all font-medium shadow-lg shadow-green-500/30 flex items-center gap-2"
+                      className="px-6 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-all font-medium flex items-center gap-2"
                     >
-                      <CheckCircle2 className="w-5 h-5" />
+                      <CheckCircle2 className="w-4 h-4" />
                       Create Case History
                     </button>
                   )}

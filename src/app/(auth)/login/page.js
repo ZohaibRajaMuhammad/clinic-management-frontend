@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import { Eye, EyeOff, Upload } from "lucide-react";
+import { Eye, EyeOff, LogIn, Mail, Lock } from "lucide-react";
 import Link from "next/link";
-import { loginApi, signupApi } from "@/services/authapi";
+import { loginApi } from "@/services/authapi";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/context/AuthContext";
 import toast from "react-hot-toast";
@@ -15,10 +15,8 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const router = useRouter();
-  const {login} = useAuthContext();
-  const [loading, setLoading] = useState(false)
-
-  
+  const { login } = useAuthContext();
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (field, value) => {
     setForm({ ...form, [field]: value });
@@ -29,8 +27,6 @@ export default function Login() {
   const validateForm = () => {
     const newErrors = {};
 
-   
-
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!form.email || !emailRegex.test(form.email)) {
       newErrors.email = "Please enter a valid email address.";
@@ -39,8 +35,6 @@ export default function Login() {
     if (!form.password || form.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters.";
     }
-
-   
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -53,103 +47,143 @@ export default function Login() {
       return;
     }
 
-    
     try {
-      setLoading(true) 
+      setLoading(true);
       const response = await loginApi(form);
-     
-      
+
       if (response.data) {
         router.push("/dashboard");
-        login(response.token)
-        toast.success('Login sucessfully')
+        login(response.token);
+        toast.success("Login successfully");
       }
     } catch (error) {
-      console.error("signin  API error, try again:", error.message);
-    }
-    finally{
-      setLoading(false)
+      console.error("signin API error, try again:", error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex-1 max-w-lg">
-      <div className="text-foreground">
-        {/* Title */}
-        <h2 className="text-4xl font-bold mb-8">Welcome Login </h2>
-
-      
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
-        
-
-          {/* Email */}
-          <div>
-            <label className="block text-xs text-foreground/60 mb-1 ml-1">
-              Email Address
-            </label>
-            <input
-              type="email"
-              placeholder="abc@gmail.com"
-              value={form.email}
-              onChange={(e) => handleChange("email", e.target.value)}
-              className="w-full bg-gray-100 border-0 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary/50 transition text-foreground"
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-            )}
-          </div>
-            {/* Password  */}
-
-            <div className="flex-1 relative">
-              <label className="block text-xs text-foreground/60 mb-1 ml-1">
-                Password
-              </label>
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="••••••••••••"
-                value={form.password}
-                onChange={(e) => handleChange("password", e.target.value)}
-                className="w-full bg-gray-100 border-0 rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-primary/50 transition pr-10 text-foreground"
-              />
-              <span
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-9 cursor-pointer text-foreground/50"
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </span>
-              {errors.password && (
-                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-              )}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
+      <div className="max-w-md w-full">
+        {/* Card Container */}
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+          <div className="p-8">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <LogIn className="text-white" size={28} />
+              </div>
+              <h1 className="text-3xl font-bold text-slate-800 mb-2">Welcome Back</h1>
+              <p className="text-slate-600">Sign in to your account to continue</p>
             </div>
 
-            <Link href="/forgetpassword" className="text-right cursor-pointer text-primary/80 tracking-wide"> forgotpassword?</Link>
-         
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Email Field */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
+                  <Mail size={16} />
+                  Email Address
+                </label>
+                <div className="relative">
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
+                    value={form.email}
+                    onChange={(e) => handleChange("email", e.target.value)}
+                    className="w-full px-4 py-3 pl-11 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200 bg-white text-slate-800 placeholder-slate-400"
+                  />
+                  <Mail className="absolute left-3 top-3.5 text-slate-400" size={18} />
+                </div>
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                    {errors.email}
+                  </p>
+                )}
+              </div>
 
-        
+              {/* Password Field */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
+                  <Lock size={16} />
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    value={form.password}
+                    onChange={(e) => handleChange("password", e.target.value)}
+                    className="w-full px-4 py-3 pl-11 pr-11 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200 bg-white text-slate-800 placeholder-slate-400"
+                  />
+                  <Lock className="absolute left-3 top-3.5 text-slate-400" size={18} />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3.5 text-slate-400 hover:text-slate-600 transition-colors duration-200"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                    {errors.password}
+                  </p>
+                )}
+              </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className={`w-full py-3 bg-primary text-white font-semibold rounded-lg hover:opacity-90 transition mt-2
-             ${loading ? "cursor-not-allowed bg-primary/70" : "cursor-pointer"}`}
-            disabled={loading}
-          >
-             {!loading ? "Login" : "Loading..."}
-          </button>
+              {/* Forgot Password */}
+              <div className="flex justify-end">
+                <Link
+                  href="/forgetpassword"
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200"
+                >
+                  Forgot your password?
+                </Link>
+              </div>
 
-          {/* Sign In Link */}
-          <div className="text-center">
-           dont have an account {" "}
-            <Link
-              href="/signup"
-              className=" text-sm text-primary"
-            >
-              Signup
-            </Link>
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3.5 px-4 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+              >
+                {loading ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Signing in...
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center gap-2">
+                    <LogIn size={18} />
+                    Sign In
+                  </div>
+                )}
+              </button>
+
+              {/* Sign Up Link */}
+              <div className="text-center pt-4 border-t border-slate-200">
+                <p className="text-slate-600">
+                  Don't have an account?{" "}
+                  <Link
+                    href="/signup"
+                    className="text-blue-600 hover:text-blue-700 font-semibold transition-colors duration-200"
+                  >
+                    Create account
+                  </Link>
+                </p>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
+
+        {/* Footer Note */}
+        <div className="text-center mt-6">
+          <p className="text-slate-500 text-sm">
+            Secure login with modern authentication
+          </p>
+        </div>
       </div>
     </div>
   );

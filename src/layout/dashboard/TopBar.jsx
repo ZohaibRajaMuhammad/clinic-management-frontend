@@ -10,6 +10,8 @@ import {
   Home,
   User,
   LogOut,
+  ChevronDown,
+  Settings,
 } from "lucide-react";
 import { useThemeContext } from "../../context/ThemeContext";
 import { useAuthContext } from "../../context/AuthContext";
@@ -20,114 +22,83 @@ export default function TopBar({ setSideBarOn }) {
   const { logout, getUserDetails } = useAuthContext();
   const userData = getUserDetails();
 
-  
-
   return (
-    <div
-      className="
-        h-[55px] w-full 
-        flex items-center justify-between 
-        px-2 sm:px-4 gap-2 py-10   
-        bg-background
-      "
-    >
-      {/* Left: Menu button (xs only) */}
-      <button
-        onClick={() => setSideBarOn(true)}
-        className="block md:hidden p-2 rounded hover:bg-foreground/10"
-      >
-        <Menu className="w-5 h-5 text-foreground" />
-      </button>
+    <div className="h-20 w-full flex items-center justify-between px-6 lg:px-8 bg-gradient-to-r from-white to-blue-50 dark:from-slate-900 dark:to-slate-800 border-b border-blue-100 dark:border-slate-700 shadow-lg">
+      {/* Left Section */}
+      <div className="flex items-center gap-5">
+        {/* Menu button for mobile */}
+        <button
+          onClick={() => setSideBarOn(true)}
+          className="block md:hidden p-2.5 rounded-xl bg-white dark:bg-slate-800 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 border border-blue-100 dark:border-slate-600"
+        >
+          <Menu className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+        </button>
 
-      {/* <h1 className="md:w-[60%] md:text-4xl text-foreground/80">
-        Welcome Back 👋
-      </h1> */}
-
-      {/* <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4"> */}
-        <div className="md:w-[60%] mt-1">
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground/80">
-            Welcome back, Moiz 👋
-          </h1>
-          <p className="text-sm text-foreground/70 mt-1">
-            there is the latest update for the last 7 days. check now
-          </p>
-        </div>
-        {/* <div className="flex gap-3">
-          <select className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-foreground/70">
-            <option>Week</option>
-            <option>Month</option>
-            <option>Year</option>
-          </select>
-          <button className="px-6 py-2 bg-primary text-white rounded-lg flex items-center gap-2">
-            <Uploa size={18} />
-            Export
-          </button>
-        </div> */}
-      {/* </div> */}
-
-      {/* Center: Search box (hidden on xs) */}
-      <div className="hidden sm:block flex-grow">
-        <div className="relative w-full">
-          <Search className="absolute left-3 top-2.5 w-4 h-4 text-foreground" />
-          <input
-            type="text"
-            placeholder="Search or type command"
-            className="
-              w-full py-2 pl-9 pr-3 text-sm rounded-lg
-              bg-primary/10
-              border border-primary !focus:ring-0
-              text-foreground
-            "
-          />
+        {/* Welcome Section */}
+        <div className="hidden md:block">
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-8 bg-gradient-to-b from-blue-500 to-purple-600 rounded-full"></div>
+            <div>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Welcome back, {userData ? userData.name : "Moiz"} 👋
+              </h1>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">
+                Ready to make today productive and efficient
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Right section */}
-      <div className="flex items-center gap-2">
-        {/* Search button (only xs) */}
-        <button className="flex sm:hidden p-2 rounded bg-primary">
-          <Search className="w-4 h-4 text-primary" />
+      {/* Center: Search Box */}
+      <div className="hidden lg:block flex-1 max-w-2xl mx-10">
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl blur-sm opacity-20"></div>
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-500" />
+            <input
+              type="text"
+              placeholder="Search patients, reports, or commands..."
+              className="w-full py-3.5 pl-12 pr-24 text-base rounded-2xl bg-white dark:bg-slate-800 border-2 border-blue-100 dark:border-slate-600 text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 focus:border-blue-300 transition-all shadow-lg"
+            />
+            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-3 py-1.5 rounded-xl border border-blue-200 dark:border-blue-700 shadow-sm">
+              ⌘K
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Section */}
+      <div className="flex items-center gap-4">
+        {/* Search button for mobile */}
+        <button className="flex lg:hidden p-3 rounded-2xl bg-white dark:bg-slate-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-blue-100 dark:border-slate-600">
+          <Search className="w-5 h-5 text-blue-600 dark:text-blue-400" />
         </button>
 
         {/* Notifications */}
-        <button className="p-2 rounded-md bg-primary/10 border-primary border ">
-          <Bell className="w-4 h-4 text-primary " />
+        <button className="relative p-3 rounded-2xl bg-white dark:bg-slate-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-blue-100 dark:border-slate-600 group">
+          <div className="relative">
+            <Bell className="w-5 h-5 text-slate-600 dark:text-slate-400 group-hover:text-blue-600 transition-colors" />
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-slate-800 shadow-lg"></div>
+          </div>
         </button>
 
-        {/* Dark/Light toggle */}
-        <button
-          className="p-2 rounded-md bg-primary/10 border-primary border"
-          onClick={() => {
-            let changedTheme = theme === "dark" ? "light" : "dark";
-            toggleTheme(changedTheme);
-          }}
-        >
-         {theme == "dark" ? (
-            <Sun className="w-4 h-4 text-foreground" />
-          ) : (
-            <Moon className="w-4 h-4 text-foreground" />
-          )} 
-          {/* <Moon className="w-4 h-4 text-foreground" /> */}
-        </button>
-
-        {/* Avatar + Name */}
-        <div className="flex items-center gap-2 ">
-          <span
-            className="
-              hidden sm:block py-1.5  rounded-md 
-              text-sm text-foreground 
-              bg-primary/15
-              border border-primary md:min-w-28 text-center
-            "
-          >
-            
-       {userData ? userData.name : "Moiz Ahmed"}
-          </span>
+        {/* User Profile */}
+        <div className="flex items-center gap-4 pl-4 border-l border-blue-100 dark:border-slate-700 ml-2">
+          <div className="hidden sm:flex flex-col items-end">
+            <span className="text-base font-bold text-slate-800 dark:text-white">
+              {userData ? userData.name : "Moiz Ahmed"}
+            </span>
+            <span className="text-sm text-blue-600 dark:text-blue-400 font-medium bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-lg">
+              {userData ? userData.role || "Doctor" : "Medical Professional"}
+            </span>
+          </div>
 
           <AccountPopover
             data={[
-              { label: "Home", href: "/", icon: Home },
+              { label: "Dashboard", href: "/", icon: Home },
               { label: "Profile", href: "/dashboard/profile", icon: User },
+              { label: "Settings", href: "/dashboard/settings", icon: Settings },
             ]}
             logoutFunction={logout}
             userData={userData}
@@ -168,29 +139,49 @@ function AccountPopover({ data, logoutFunction, userData }) {
     <div className="relative" ref={popoverRef}>
       <button
         onClick={handleToggle}
-        className="w-10 h-10 rounded-full overflow-hidden border border-primary"
+        className="flex items-center gap-3 p-2 rounded-2xl bg-white dark:bg-slate-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-blue-100 dark:border-slate-600 group"
       >
-        <img
-          src="/assets/profileIcon.png"
-          alt="Profile Icon"
-          className="w-full h-full object-cover"
-        />
+        <div className="relative">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 overflow-hidden border-2 border-white dark:border-slate-800 shadow-lg">
+            <img
+              src="/assets/profileIcon.png"
+              alt="Profile"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-slate-800"></div>
+        </div>
+        <ChevronDown className={`w-4 h-4 text-blue-600 dark:text-blue-400 transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
       </button>
 
       {open && (
-        <div
-          className="
-            absolute right-0 mt-2 w-52
-            bg-background 
-            rounded-md shadow-lg z-50
-          "
-        >
-          <div className="p-3 border-b border-primary/70 border-dashed">
-            <p className="text-sm font-medium text-foreground">{userData ? userData.fullName : "Moiz Ahmed"}</p>
-            <p className="text-xs text-foreground">{userData ? userData.email : "moiz@gmail.com"}</p>
+        <div className="absolute right-0 top-full mt-3 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-blue-100 dark:border-slate-700 z-50 overflow-hidden backdrop-blur-lg">
+          {/* User Info Header */}
+          <div className="p-5 bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm border-2 border-white/30 overflow-hidden shadow-lg">
+                  <img
+                    src="/assets/profileIcon.png"
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-lg font-bold text-white truncate">
+                  {userData ? userData.fullName : "Moiz Ahmed"}
+                </p>
+                <p className="text-sm text-blue-100 truncate">
+                  {userData ? userData.email : "moiz@healthcare.com"}
+                </p>
+              </div>
+            </div>
           </div>
 
-          <div className="flex flex-col p-2">
+          {/* Navigation Items */}
+          <div className="p-3 bg-white dark:bg-slate-800">
             {data.map((option) => {
               const Icon = option.icon;
               const active = pathname === option.href;
@@ -199,28 +190,33 @@ function AccountPopover({ data, logoutFunction, userData }) {
                   key={option.label}
                   onClick={() => handleClickItem(option.href)}
                   className={`
-                    flex items-center gap-2 px-3 py-2 rounded text-sm
+                    flex items-center gap-4 w-full px-4 py-3.5 rounded-xl text-sm font-semibold transition-all duration-300 mb-1
                     ${
                       active
-                        ? "bg-primary/20 text-primary"
-                        : "text-foreground/80  hover:bg-primary/20 hover:text-primary "
+                        ? "bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800 shadow-md"
+                        : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:shadow-md hover:translate-x-1"
                     }
                   `}
                 >
-                  <Icon className="w-4 h-4" />
+                  <div className={`p-2 rounded-lg ${active ? 'bg-blue-100 dark:bg-blue-900/30' : 'bg-slate-100 dark:bg-slate-700'}`}>
+                    <Icon className="w-4 h-4" />
+                  </div>
                   {option.label}
                 </button>
               );
             })}
           </div>
 
-          <div className="border-t border-primary/70 border-dashed  p-2">
+          {/* Logout Section */}
+          <div className="border-t border-slate-200 dark:border-slate-700 p-3 bg-white dark:bg-slate-800">
             <button
               onClick={logoutFunction}
-              className="flex items-center gap-2 w-full justify-center py-2 text-sm text-red-600 hover:bg-red-50  rounded"
+              className="flex items-center gap-4 w-full px-4 py-3.5 rounded-xl text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all duration-300 hover:shadow-md border border-transparent hover:border-red-200 dark:hover:border-red-800"
             >
-              <LogOut className="w-4 h-4" />
-              Logout
+              <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30">
+                <LogOut className="w-4 h-4" />
+              </div>
+              Sign Out
             </button>
           </div>
         </div>
